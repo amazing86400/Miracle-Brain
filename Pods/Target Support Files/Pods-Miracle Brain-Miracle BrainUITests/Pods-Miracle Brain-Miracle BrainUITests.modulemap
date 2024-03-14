@@ -1,0 +1,6 @@
+framework module Pods_Miracle_Brain_Miracle_BrainUITests {
+  umbrella header "Pods-Miracle Brain-Miracle BrainUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
