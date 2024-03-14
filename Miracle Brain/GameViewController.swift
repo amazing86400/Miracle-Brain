@@ -213,6 +213,7 @@ class GameViewController: UIViewController {
     
     @IBAction func clickEndBtn(_ sender: UIButton) {
         let eventData: [String: String] = [
+            "ep_platform": "APP",
             "ep_category": "버튼 클릭",
             "ep_area": "종료 버튼"
         ]

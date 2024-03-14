@@ -6,15 +6,61 @@
 //
 
 import UIKit
+import AppTrackingTransparency
+import FirebaseAnalytics
+import FirebaseDynamicLinks
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
-    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        for userActivity in connectionOptions.userActivities {
+            if let incomingURL = userActivity.webpageURL {
+                print("Incoming URL is \(incomingURL)")
+                let linkHandled = DynamicLinks.dynamicLinks().handleUniversalLink(incomingURL) { (dynamicLink, error) in
+                    guard error == nil else{
+                        print("Found an error \(error!.localizedDescription)")
+                        return
+                    }
+                    if dynamicLink == dynamicLink {
+                        self.handelIncomingDynamicLink(_dynamicLink: dynamicLink!)
+                    }
+                }
+                print("linkHandled: \(linkHandled)")
+                break
+            }
+        }
         
         guard let _ = (scene as? UIWindowScene) else { return }
+    }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            print("url:-   \(url)")
+            if let dynamicLink = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url) {
+                self.handelIncomingDynamicLink(_dynamicLink: dynamicLink)
+            } else {
+                print("False")
+            }
+            
+        }
+    }
+    
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        if let incomingURL = userActivity.webpageURL {
+            print("Incoming URL is \(incomingURL)")
+            let linkHandled = DynamicLinks.dynamicLinks().handleUniversalLink(incomingURL) { (dynamicLink, error) in
+                guard error == nil else {
+                    print("Found an error \(error!.localizedDescription)")
+                    return
+                }
+                if dynamicLink == dynamicLink {
+                    self.handelIncomingDynamicLink(_dynamicLink: dynamicLink!)
+                }
+            }
+            print(linkHandled)
+        }
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -25,8 +71,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            //ATT Framework
+            if #available(iOS 14, *) {
+                ATTrackingManager.requestTrackingAuthorization { status in
+                    switch status{
+                    case .notDetermined:
+                        print("notDetermined")
+                        Analytics.setAnalyticsCollectionEnabled(false)
+                    case .restricted:
+                        print("restricted")
+                        Analytics.setAnalyticsCollectionEnabled(false)
+                    case .denied:
+                        print("denied")
+                        Analytics.setAnalyticsCollectionEnabled(false)
+                    case .authorized:
+                        print("authorized")
+                        Analytics.setAnalyticsCollectionEnabled(true)
+                    @unknown default:
+                        print("unknown")
+                        Analytics.setAnalyticsCollectionEnabled(false)
+                    }
+                }
+            }
+        }
     }
     
     func sceneWillResignActive(_ scene: UIScene) {
@@ -45,6 +113,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
     
-    
+    func handelIncomingDynamicLink(_dynamicLink: DynamicLink) {
+        if !_dynamicLink.utmParametersDictionary.isEmpty {
+            let utmParams = _dynamicLink.utmParametersDictionary
+            Analytics.logEvent(AnalyticsEventCampaignDetails, parameters: utmParams)
+            Analytics.logEvent("campaign_test", parameters: utmParams)
+            print("match: \(_dynamicLink.matchType)")
+            _dynamicLink.matchType
+        }
+    }
 }
 

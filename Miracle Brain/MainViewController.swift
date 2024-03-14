@@ -69,16 +69,37 @@ class MainViewController: UIViewController {
     
     // 더하기 버튼 클릭 이벤트 핸들러
     @IBAction func clickPlusBtn(_ sender: Any) {
+        let eventData: [String: String] = [
+            "ep_platform": "APP",
+            "ep_category": "버튼 클릭",
+            "ep_area": "더하기 버튼"
+        ]
+        
+        Analytics.logEvent("click_event", parameters: eventData)
         navigateToOptionViewController("더하기")
     }
     
     // 빼기 버튼 클릭 이벤트 핸들러
     @IBAction func clickMinusBtn(_ sender: Any) {
+        let eventData: [String: String] = [
+            "ep_platform": "APP",
+            "ep_category": "버튼 클릭",
+            "ep_area": "빼기 버튼"
+        ]
+        
+        Analytics.logEvent("click_event", parameters: eventData)
         navigateToOptionViewController("빼기")
     }
     
     // 곱하기 버튼 클릭 이벤트 핸들러
     @IBAction func clickMultiplyBtn(_ sender: Any) {
+        let eventData: [String: String] = [
+            "ep_platform": "APP",
+            "ep_category": "버튼 클릭",
+            "ep_area": "곱하기 버튼"
+        ]
+        
+        Analytics.logEvent("click_event", parameters: eventData)
         navigateToOptionViewController("곱하기")
     }
     
