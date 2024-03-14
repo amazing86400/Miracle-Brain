@@ -7,6 +7,8 @@ target 'Miracle Brain' do
 
   # Pods for Miracle Brain
     pod 'lottie-ios'
+    pod 'FirebaseAnalytics'
+    pod 'FirebaseDynamicLinks'
 
   target 'Miracle BrainTests' do
     inherit! :search_paths

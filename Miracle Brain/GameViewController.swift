@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAnalytics
 
 enum Level: String {
     case beginner = "초급"
@@ -61,6 +62,19 @@ class GameViewController: UIViewController {
         secondNumLabel.textColor = .black
         
         startTimer()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let screenData: [String: String] = [
+            AnalyticsParameterScreenName: "게임 화면",
+            "ep_platform": "APP",
+        ]
+        
+        Analytics.setUserProperty(Analytics.appInstanceID(), forName: "up_cid")
+        
+        Analytics.logEvent(AnalyticsEventScreenView, parameters: screenData)
     }
     
     // MARK: 계산 기능 함수 정의
@@ -198,6 +212,12 @@ class GameViewController: UIViewController {
     }
     
     @IBAction func clickEndBtn(_ sender: UIButton) {
+        let eventData: [String: String] = [
+            "ep_category": "버튼 클릭",
+            "ep_area": "종료 버튼"
+        ]
+        
+        Analytics.logEvent("click_event", parameters: eventData)
         navigateToMainViewController()
     }
 }

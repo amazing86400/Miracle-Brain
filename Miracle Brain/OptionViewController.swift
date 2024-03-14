@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAnalytics
 
 class OptionViewController: UIViewController {
     
@@ -29,7 +30,26 @@ class OptionViewController: UIViewController {
         self.startBtn.layer.shadowOffset = CGSize.zero
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let screenData: [String: String] = [
+            AnalyticsParameterScreenName: "옵션 화면",
+            "ep_platform": "APP",
+        ]
+        
+        Analytics.setUserProperty(Analytics.appInstanceID(), forName: "up_cid")
+        
+        Analytics.logEvent(AnalyticsEventScreenView, parameters: screenData)
+    }
+    
     @IBAction func clickStartBtn(_ sender: UIButton) {
+        let eventData: [String: String] = [
+            "ep_category": "버튼 클릭",
+            "ep_area": "시작 버튼"
+        ]
+        
+        Analytics.logEvent("click_event", parameters: eventData)
         navigateToGameViewController()
     }
     

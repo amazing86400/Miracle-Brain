@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAnalytics
 
 extension UIButton {
     // 버튼 스타일 설정 함수 정의
@@ -51,6 +52,19 @@ class MainViewController: UIViewController {
         self.plusBtn.addClickAction()
         self.minusBtn.addClickAction()
         self.multiplyBtn.addClickAction()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let screenData: [String: String] = [
+            AnalyticsParameterScreenName: "메인 화면",
+            "ep_platform": "APP",
+        ]
+        
+        Analytics.setUserProperty(Analytics.appInstanceID(), forName: "up_cid")
+        
+        Analytics.logEvent(AnalyticsEventScreenView, parameters: screenData)
     }
     
     // 더하기 버튼 클릭 이벤트 핸들러
